@@ -1,6 +1,8 @@
 package com.kylas.ParkingLot.EntityService;
 
 import com.kylas.ParkingLot.Entity.Vehicle;
+import com.kylas.ParkingLot.MyExceptions.InvalidChoiceException;
+import com.kylas.ParkingLot.MyExceptions.VehicleAlreadyExistsException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,52 +22,63 @@ public class VehicleService {
 
 
 
-    public void acceptTypeofVehicle()throws IOException{
-        int vehicletypenumber=-1;
+    public void acceptTypeofVehicle(String type_of_vehicle){
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            System.out.println("Enter Number To Select Type Of Vehicle:\n1. Car\n2.Truck\n3. Bike");
-            vehicletypenumber = Integer.parseInt(br.readLine());
-            if(vehicletypenumber>3 || vehicletypenumber<1) throw new InvalidChoiceException("Selection of Invalid Type Entry");
-            switch (vehicletypenumber) {
-                case 1:
-                    this.vehicle.setVehicleType("Car");
-                    break;
-                case 2:
-                    this.vehicle.setVehicleType("Truck");
-                    break;
-                case 3:
-                    this.vehicle.setVehicleType("Bike");
-                    break;
-                default:
-                    System.out.println("Invalid Input!!!");
-            }
-        }catch (NumberFormatException numberFormatException){
-            System.out.println("Please Select From Displayed Menu Only!!");
-            acceptTypeofVehicle();
+            if(type_of_vehicle.equals("Car") || type_of_vehicle.equals("Bike") || type_of_vehicle.equals("Truck"))
+                this.vehicle.setVehicleType(type_of_vehicle);
+            else
+                throw new InvalidChoiceException("Selection of Invalid Type Entry");
+
         }catch (InvalidChoiceException invalidChoiceException) {
             System.out.println(invalidChoiceException.getMessage());
-            System.out.println("Please Select Number From Menu Only!!");
-            acceptTypeofVehicle();
+            System.out.println("Please Enter From Menu Only!!");
+            throw new InvalidChoiceException(invalidChoiceException.getMessage());
+            //acceptTypeofVehicle(type_of_vehicle);
+        }catch (NumberFormatException numberFormatException){
+            System.out.println("Please Select From Displayed Menu Only!!");
+            //acceptTypeofVehicle();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public boolean acceptNumberofVehicle()throws IOException{
-        System.out.print("Enter Number Of Your Car :- ");
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String numberofvehicle = br.readLine();
+    public boolean acceptNumberofVehicle(String number_of_vehicle)throws Exception{
+        Vehicle checkVehicle=null;
+        if(!checkValidityOfNumber(number_of_vehicle))return false;
+        try {
+            checkVehicle = Vehicle.getListOfVehicles()
+                    .stream()
+                    .filter(vehicle1 -> vehicle1.getVehicle_number().equals(number_of_vehicle))
+                    .findFirst()
+                    .orElse(null);
 
-        Vehicle checkVehicle = Vehicle.getListOfVehicles()
-                                                .stream()
-                                                .filter(vehicle1 -> vehicle1.getVehicle_number()==this.vehicle.getVehicle_number())
-                                                .findFirst()
-                                                .orElse(null);
-        if(checkVehicle==null){
+            if(checkVehicle!=null) throw new VehicleAlreadyExistsException("The number you are trying to enter is already parked try unparking vehicle!!");
+
             Vehicle.getListOfVehicles().add(this.vehicle);
-            this.vehicle.setVehicleNumber(numberofvehicle);
+            this.vehicle.setVehicleNumber(number_of_vehicle);
             return true;
+
+        } catch (VehicleAlreadyExistsException vehicleAlreadyExistsException) {
+            throw new VehicleAlreadyExistsException(vehicleAlreadyExistsException.getMessage());//System.out.println(vehicleAlreadyExistsException.getMessage());
         }
-        else System.out.println("Same Number Vehicle Already Exists!!");
-        return false;
+        catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
+     public boolean checkValidityOfNumber(String number_of_vehicle) {
+        if(number_of_vehicle.length() != 10)return false;
+        if(Character.isLetter(number_of_vehicle.charAt(0)) && Character.isLetter(number_of_vehicle.charAt(1))) {
+            if (Character.isDigit(number_of_vehicle.charAt(2)) && Character.isDigit(number_of_vehicle.charAt(3))) {
+                if (Character.isLetter(number_of_vehicle.charAt(4)) && Character.isLetter(number_of_vehicle.charAt(5))) {
+                    for (int lastFourDigit = 6; lastFourDigit < 10; lastFourDigit++) {
+                        if (!Character.isDigit(number_of_vehicle.charAt(lastFourDigit))) {
+                            return false;
+                        }
+                    }
+                } else return false;
+            } else return false;
+        }else return false;
+        return true;
     }
 }

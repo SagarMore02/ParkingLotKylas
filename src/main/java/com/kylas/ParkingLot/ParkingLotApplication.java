@@ -1,6 +1,7 @@
 package com.kylas.ParkingLot;
 import com.kylas.ParkingLot.EntityService.*;
 
+import com.kylas.ParkingLot.MyExceptions.VehicleAlreadyExistsException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -19,7 +20,7 @@ public class ParkingLotApplication {
 		System.out.println("Welcome to Parking Software!!");
 
 		ParkingLotService parkingLotService = new ParkingLotService();
-			parkingLotService.createParkingLot();
+			parkingLotService.createParkingLot(2,3);
 			parkingLotService.showParking();
 
 		VehicleService vehicleService = new VehicleService();
@@ -39,12 +40,16 @@ public class ParkingLotApplication {
 				choice = Integer.parseInt(br.readLine());
 				switch (choice) {
 					case 1:
-						vehicleService.acceptTypeofVehicle();
+						System.out.print("Enter Type Of Vehicle:- ");
+						String type_of_vehicle = br.readLine();
+						vehicleService.acceptTypeofVehicle(type_of_vehicle);
 						if (parkingLotService.checkForVacancy(vehicleService)) {
-							if (vehicleService.acceptNumberofVehicle()) {
+							System.out.print("Enter Number Of Vehicle:- ");
+							String number_of_vehicle = br.readLine();
+							if (vehicleService.acceptNumberofVehicle(number_of_vehicle)) {
 								ticketService.parkVehicle(parkingLotService, vehicleService);
 								ticketService.printTicket();
-							}
+							}else throw new VehicleAlreadyExistsException("The number you are trying to enter is already parked try unparking vehicle!!");
 
 						} else {
 							System.out.println("No Vacancy For This Type of Vehicle Available");
@@ -74,10 +79,15 @@ public class ParkingLotApplication {
 						break;
 				}
 			if (choice == 6) break;
-			}catch (NumberFormatException | IOException numberFormatException){
-				System.out.println("Please Select From Displayed Menu Only!!");
+			} catch (VehicleAlreadyExistsException vehicleAlreadyExistsException) {
+				System.out.println(vehicleAlreadyExistsException.getMessage());
 			}
-		}
+			catch (NumberFormatException | IOException numberFormatException){
+				System.out.println("Please Select From Displayed Menu Only!!");
+			} catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
 		System.out.print("ByeBye!");
 	}
 

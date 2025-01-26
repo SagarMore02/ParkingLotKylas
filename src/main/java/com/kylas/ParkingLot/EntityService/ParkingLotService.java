@@ -3,6 +3,8 @@ package com.kylas.ParkingLot.EntityService;
 import com.kylas.ParkingLot.Entity.Floor;
 import com.kylas.ParkingLot.Entity.ParkingLot;
 import com.kylas.ParkingLot.Entity.Slot;
+import com.kylas.ParkingLot.MyExceptions.InvalidChoiceException;
+import com.kylas.ParkingLot.MyExceptions.NumberCannotBeLessThanOneException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,7 +25,7 @@ public class ParkingLotService{
     floor_service = new FloorService();
     }
 
-    public int acceptInt()throws  IOException{
+    public int acceptInt() {
         int number_check;
         while (true) {
             try {
@@ -36,7 +38,10 @@ public class ParkingLotService{
             }catch (NumberFormatException numberFormatException){
                 System.out.println("Cannot Accept this format as Number of Floors "+numberFormatException.getMessage());
                 System.out.println("Please Re-enter Number in Integer Format Only!!!!");
-            }catch(Exception e){
+//            }catch (IOException ioException){
+//
+            }
+            catch(Exception e){
                 System.out.println(e.getMessage());
             }
         }
@@ -47,18 +52,18 @@ public class ParkingLotService{
 
 
     //Creation
-    public void createParkingLot() throws IOException {
-            System.out.print("Please Enter Number of Floors :- ");
-            int number_of_floors= acceptInt();
+    public void createParkingLot(int floors,int slots) {
+            //System.out.print("Please Enter Number of Floors :- ");
+            int number_of_floors= floors;//acceptInt();
 
             new ParkingLotService();
 
             for (int floor_number = 0; floor_number < number_of_floors; floor_number++) {
 
-                System.out.print("Please Enter Number of Slots For Your floor " + (floor_number + 1) + " : ");
+                //System.out.print("Please Enter Number of Slots For Your floor " + (floor_number + 1) + " : ");
 
 
-                int number_of_slots = acceptInt();
+                int number_of_slots = slots;//acceptInt();
 
 
                 list_of_slots = new ArrayList<>();
@@ -75,7 +80,7 @@ public class ParkingLotService{
                                 System.out.println("1. Car Slot");
                                 System.out.println("2. Truck Slot");
                                 System.out.println("3. Bike Slot");
-                                choice = acceptInt();
+                                choice = slot_number+1;//acceptInt();
                                 if (choice > 3) throw new InvalidChoiceException("Selection of Invalid Type Entry");
                                 break;
                             } catch (InvalidChoiceException invalidChoiceException) {
