@@ -1,32 +1,47 @@
 package com.kylas.ParkingLot.Entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.kylas.ParkingLot.MyExceptions.InvalidVehicleNumberException;
+import com.kylas.ParkingLot.MyExceptions.InvalidVehicleTypeException;
+
 public class Vehicle {
-    private int vehicle_id;
-    static int vehicle_count=0;
-    private String vehicle_type;
-    private String vehicle_number;
-    private static List<Vehicle> list_of_vehicles = new ArrayList<>();
-    public Vehicle(){
-        vehicle_count++;
-        vehicle_id=vehicle_count;
-    }
-    public static List<Vehicle> getListOfVehicles() {
-        return list_of_vehicles;
+    private String vehicleType;
+    private String vehicleNumber;
+    public Vehicle(String vehicleType,String vehicleNumber){
+        this.vehicleType=vehicleType;
+        this.vehicleNumber=vehicleNumber;
+        validateNumber();
+        validateType();
     }
 
-    public String getVehicle_number(){
-        return this.vehicle_number;
+    private void validateType() {
+        if(vehicleType.equals("Car")||vehicleType.equals("Bike")||vehicleType.equals("Truck"))return;
+        throw new InvalidVehicleTypeException("The Vehicle Type You Entered is Invalid");
     }
 
+    public void validateNumber(){
+        if(vehicleNumber.length() != 10)throw new InvalidVehicleNumberException("Vehicle Number Count Cannot Be Less Than 10");
+        if(Character.isLetter(vehicleNumber.charAt(0)) && Character.isLetter(vehicleNumber.charAt(1))) {
+            if (Character.isDigit(vehicleNumber.charAt(2)) && Character.isDigit(vehicleNumber.charAt(3))) {
+                if (Character.isLetter(vehicleNumber.charAt(4)) && Character.isLetter(vehicleNumber.charAt(5))) {
+                    for (int lastFourDigit = 6; lastFourDigit < 10; lastFourDigit++) {
+                        if (!Character.isDigit(vehicleNumber.charAt(lastFourDigit))) {
+                            throw new InvalidVehicleNumberException("Invalid Vehicle Number");
+                        }
+                    }
+                } else throw new InvalidVehicleNumberException("Invalid Vehicle Number");;
+            } else throw new InvalidVehicleNumberException("Invalid Vehicle Number");;
+        }else throw new InvalidVehicleNumberException("Invalid Vehicle Number");
+    }
+    public String getVehicleNumber(){
+        return this.vehicleNumber;
+    }
     public void setVehicleType(String typeofvehicle) {
-        this.vehicle_type = typeofvehicle;
+        this.vehicleType = typeofvehicle;
     }
-    public String getVehicle_type(){
-        return this.vehicle_type;
+    public String getVehicleType(){
+        return this.vehicleType;
     }
-    public void setVehicleNumber(String numberofvehicle) {
-        this.vehicle_number=numberofvehicle;
-    }
+//    public void setVehicleNumber(String numberofvehicle) {
+//        this.vehicleNumber =numberofvehicle;
+//    }
 }

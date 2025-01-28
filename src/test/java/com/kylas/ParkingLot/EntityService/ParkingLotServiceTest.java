@@ -1,40 +1,37 @@
 package com.kylas.ParkingLot.EntityService;
 
+import com.kylas.ParkingLot.Entity.Slot;
+import com.kylas.ParkingLot.Entity.Vehicle;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.ReactiveHttpOutputMessage;
 
-import java.io.IOException;
+import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 class ParkingLotServiceTest {
-
+    ParkingLotService parkingLotService = new ParkingLotService(2,3);
     @Test
-    void givenVehicleService_whenVacantSlotsAvailable_ShouldGIveTrue() throws IOException {
+    public void givenVehicle_WhenGetVacantSlot_ThenShouldGetFirstVacantSlot(){
         //Given
-        ParkingLotService parkingLotService = new ParkingLotService();
-        parkingLotService.createParkingLot(2,3);
-        VehicleService vehicleService = new VehicleService();
-        vehicleService.acceptTypeofVehicle("Car");
+        Vehicle vehicle = new Vehicle("Car","MH14KH4694");
 
         //When
-        boolean result = parkingLotService.checkForVacancy(vehicleService);
+        Slot slot = parkingLotService.getVacantSlotToPark(vehicle).getSlot();
 
         //Then
-        assertTrue(result);
+        Assertions.assertThat(slot.getSlotVacancy()).isEqualTo(true);
     }
 
     @Test
-    void givenVehicleService_whenVacantSlotsUnavailable_ShouldGIveTrue() throws IOException {
+    public void givenVehicle_WhenGetVacantSlot_ThenShouldGetFirstVacantSlotWithSameType(){
         //Given
-        ParkingLotService parkingLotService = new ParkingLotService();
-        parkingLotService.createParkingLot(0,3);
-        VehicleService vehicleService = new VehicleService();
-        vehicleService.acceptTypeofVehicle("Car");
+        Vehicle vehicle = new Vehicle("Car","MH14KH4694");
 
         //When
-        boolean result = parkingLotService.checkForVacancy(vehicleService);
+        Slot slot = parkingLotService.getVacantSlotToPark(vehicle).getSlot();
 
         //Then
-        assertFalse(result);
+        Assertions.assertThat(slot.getSlotType()).isEqualTo("Car");
     }
 }

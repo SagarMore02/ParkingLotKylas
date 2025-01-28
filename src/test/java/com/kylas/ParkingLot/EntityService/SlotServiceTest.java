@@ -1,47 +1,43 @@
 package com.kylas.ParkingLot.EntityService;
 
 import com.kylas.ParkingLot.Entity.Slot;
+import com.kylas.ParkingLot.Entity.Vehicle;
+import org.assertj.core.api.*;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class SlotServiceTest {
+    SlotService slotService = new SlotService();
+    Vehicle vehicle;
+    Slot slot;
     @Test
-    public void givenVehicleservice_WhenParked_ThenSlotVacantShouldBeFalse(){
+    public void givenVacantSlot_WhenVehicleParkedAtSlot_ThenSlotShouldBeOccupied(){
         //Given
-        Slot slot = new Slot("A1","Car");
-        SlotService slotService = new SlotService();
-        VehicleService vehicleService = new VehicleService();
-        String number_of_vehicle = "MH14KH4694";
-        String type_of_vehicle = "Bike";
-        vehicleService.acceptTypeofVehicle(type_of_vehicle);
-        vehicleService.checkValidityOfNumber(number_of_vehicle);
+         slot = new Slot("TestSlot","Car");
+         vehicle = new Vehicle("Car","MH14KH4694");
 
         //When
-        slotService.parkAtSlot(slot,vehicleService);
+        slotService.parkAtSlot(slot,vehicle);
 
         //Then
-        assertFalse(slot.isIs_slot_vacant());
+        Assertions.assertThat(slot.getSlotVacancy()).isEqualTo(false);
     }
 
     @Test
-    public void givenVehicleservice_WhenFreed_ThenSlotVacantShouldBeTrue() {
+    public void givenOccupiedSlot_WhenUnparked_ThenSlotShouldBeFreed(){
         //Given
-        Slot slot = new Slot("A1","Car");
-        SlotService slotService = new SlotService();
-        VehicleService vehicleService = new VehicleService();
-        String number_of_vehicle = "MH14KH4694";
-        String type_of_vehicle = "Bike";
-        vehicleService.acceptTypeofVehicle(type_of_vehicle);
-        vehicleService.checkValidityOfNumber(number_of_vehicle);
-        slotService.parkAtSlot(slot,vehicleService);
-        
+        slot = new Slot("TestSlot","Car");
+        vehicle = new Vehicle("Car","MH14KH4694");
+        slotService.parkAtSlot(slot,vehicle);
+
         //When
         slotService.freeSlot(slot);
-        
+
         //Then
-        assertTrue(slot.isIs_slot_vacant());
+        Assertions.assertThat(slot.getSlotVacancy()).isEqualTo(true);
     }
+
 }

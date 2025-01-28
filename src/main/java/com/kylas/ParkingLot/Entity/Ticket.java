@@ -9,7 +9,7 @@ public class Ticket {
     private String slot_id;
     private String floor_id;
     private String vehicle_number;
-    static List<Ticket> list_of_issued_tickets = new ArrayList<>();
+
     public Ticket(){
     }
     public Ticket(String slot_id, String floor_id, String vehicle_number){
@@ -20,13 +20,13 @@ public class Ticket {
         this.vehicle_number=vehicle_number;
     }
 
-    public static List<Ticket> getList_of_issued_tickets(){
-        return list_of_issued_tickets;
-    }
-
-    public static void setList_of_issued_tickets(Ticket ticket){
-        list_of_issued_tickets.add(ticket);
-    }
+//    public static List<Ticket> getList_of_issued_tickets(){
+//        return list_of_issued_tickets;
+//    }
+//
+//    public static void setList_of_issued_tickets(Ticket ticket){
+//        list_of_issued_tickets.add(ticket);
+//    }
 
     public void setTicket_id(Integer ticket_id){
         this.ticket_id = ticket_id;
