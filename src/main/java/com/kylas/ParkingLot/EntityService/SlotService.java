@@ -14,8 +14,8 @@ public class SlotService {
         vacantSlot.occupySlot();
     }
 
-    public void freeSlot(Slot slot_to_free) {
-        slot_to_free.setSlotVacant(true);
-        slot_to_free.setVehicleNumber(null);
+    public void freeSlot(Slot slotToFree) {
+        slotToFree.setSlotVacant(true);
+        slotToFree.setVehicleNumber(null);
     }
 }
