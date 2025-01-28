@@ -17,7 +17,7 @@ public class TicketService {
     }
 
     public void freeTicket(Ticket ticket){
-        ticket.setTicket_id(null);
+        ticket.setTicketId(null);
         ticket.setFloorId(null);
         ticket.setSlotId(null);
         ticket.setVehicleNumber(null);
