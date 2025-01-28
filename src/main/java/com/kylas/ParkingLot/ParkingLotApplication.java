@@ -16,8 +16,8 @@ import java.util.Map;
 public class ParkingLotApplication {
 		public static void main(String[] args) throws Exception {
 			SpringApplication.run(ParkingLotApplication.class, args);
-			Map<String,Vehicle> list_of_vehicles = new HashMap<>();
-			Map<String,Ticket> list_of_issued_tickets = new HashMap<>();
+			Map<String,Vehicle> listOfVehicles = new HashMap<>();
+			Map<String,Ticket> listOfIssuedTickets = new HashMap<>();
 
 
 			Ticket ticket;
@@ -63,12 +63,12 @@ public class ParkingLotApplication {
 							if(vacantSlotFloor==null){
 								throw new NoSlotFreeException("No Slot Free For This Type Of Vehicle");
 							}
-							if(!list_of_vehicles.containsKey(vehicle.getVehicleNumber())){//To Check If Vehicle Already Exists in system
+							if(!listOfVehicles.containsKey(vehicle.getVehicleNumber())){//To Check If Vehicle Already Exists in system
 									slotService.parkAtSlot(vacantSlotFloor.getSlot(),vehicle);
 									ticket=new Ticket(vacantSlotFloor.getSlot().getSlotId(),vacantSlotFloor.getFloor().getFloor_id(),vehicle.getVehicleNumber());
 									ticketService.printTicket(ticket);
-									list_of_vehicles.put(vehicle.getVehicleNumber(),vehicle);
-									list_of_issued_tickets.put(vehicle.getVehicleNumber(),ticket);
+									listOfVehicles.put(vehicle.getVehicleNumber(),vehicle);
+									listOfIssuedTickets.put(vehicle.getVehicleNumber(),ticket);
 									parkingLotService.showParking();
 							}else{
 								System.out.println("Vehicle Already Exists Try Checking Out Vehicle First!!");
@@ -77,17 +77,17 @@ public class ParkingLotApplication {
 						case 2:
 							System.out.print("Enter Vehicle Number :- ");
 							String vehicleNumberToExit = br.readLine();
-							if (list_of_issued_tickets.containsKey(vehicleNumberToExit)){
+							if (listOfIssuedTickets.containsKey(vehicleNumberToExit)){
 
-								ticket=list_of_issued_tickets.get(vehicleNumberToExit);
+								ticket=listOfIssuedTickets.get(vehicleNumberToExit);
 								Slot slot = ticketService.getSlotWhereVehicleIsParked(parkingLotService, ticket);
 
 								if(slot==null)throw new InvalidSlotException("Invalid Slot");
 
 								slotService.freeSlot(slot);
 								ticketService.freeTicket(ticket);
-								list_of_vehicles.remove(vehicleNumberToExit);
-								list_of_issued_tickets.remove(vehicleNumberToExit);
+								listOfVehicles.remove(vehicleNumberToExit);
+								listOfIssuedTickets.remove(vehicleNumberToExit);
 							}
 							else System.out.println("Invalid Ticket Number!!");
 							break;

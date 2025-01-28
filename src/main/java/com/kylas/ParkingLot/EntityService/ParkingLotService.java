@@ -25,8 +25,8 @@ public class ParkingLotService{
     }
 
     public void createParkingLot() {
-            int number_of_floors= floors;
-            for (int floorNumber = 0; floorNumber < number_of_floors; floorNumber++) {
+            int numberOfFloors= floors;
+            for (int floorNumber = 0; floorNumber < numberOfFloors; floorNumber++) {
                 listOfSlots = new ArrayList<>();
                 for (int slotNumber = 0; slotNumber < slots; slotNumber++) {
                     String slotno = ((char) (64 + floorNumber + 1) + "") + (slotNumber + 1);
