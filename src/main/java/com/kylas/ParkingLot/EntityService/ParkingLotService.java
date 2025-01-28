@@ -1,132 +1,78 @@
 package com.kylas.ParkingLot.EntityService;
 
-import com.kylas.ParkingLot.Entity.Floor;
-import com.kylas.ParkingLot.Entity.ParkingLot;
-import com.kylas.ParkingLot.Entity.Slot;
+import com.kylas.ParkingLot.Entity.*;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ParkingLotService{
-
-    List<SlotService> list_of_slots;
-    FloorService floor_service;
+    int floors;
+    int slots;
+    List<Slot> listOfSlots;
+    FloorService floorService;
     ParkingLot parkinglot;
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
     //Constructor
-    public ParkingLotService(){
+    public ParkingLotService(int floors,int slots){
     parkinglot = new ParkingLot();
-    floor_service = new FloorService();
+    floorService = new FloorService();
+    this.floors=floors;
+    this.slots=slots;
+    createParkingLot();
     }
 
-    public int acceptInt()throws  IOException{
-        int number_check;
-        while (true) {
-            try {
-                number_check = Integer.parseInt(br.readLine());
-                if (number_check<1)throw  new NumberCannotBeLessThanOneException("Minimum Value Should Be One!!");
-                break;
-            }catch(NumberCannotBeLessThanOneException numberCannotBeLessThanOneException) {
-                System.out.println(numberCannotBeLessThanOneException.getMessage());
-                System.out.println("Please Re-enter Number!!");
-            }catch (NumberFormatException numberFormatException){
-                System.out.println("Cannot Accept this format as Number of Floors "+numberFormatException.getMessage());
-                System.out.println("Please Re-enter Number in Integer Format Only!!!!");
-            }catch(Exception e){
-                System.out.println(e.getMessage());
-            }
-        }
-        return number_check;
-
-
-    }
-
-
-    //Creation
-    public void createParkingLot() throws IOException {
-            System.out.print("Please Enter Number of Floors :- ");
-            int number_of_floors= acceptInt();
-
-            new ParkingLotService();
-
-            for (int floor_number = 0; floor_number < number_of_floors; floor_number++) {
-
-                System.out.print("Please Enter Number of Slots For Your floor " + (floor_number + 1) + " : ");
-
-
-                int number_of_slots = acceptInt();
-
-
-                list_of_slots = new ArrayList<>();
-
-                for (int slot_number = 0; slot_number < number_of_slots; slot_number++) {
-                    String slotno = ((char) (64 + floor_number + 1) + "") + (slot_number + 1);
-                    String slot_type;
-
-                    while (true) {
-                        int choice=-1;
-                        while(true) {
-                            try {
-                                System.out.println("Enter Type To Set For Slot:- ");
-                                System.out.println("1. Car Slot");
-                                System.out.println("2. Truck Slot");
-                                System.out.println("3. Bike Slot");
-                                choice = acceptInt();
-                                if (choice > 3) throw new InvalidChoiceException("Selection of Invalid Type Entry");
-                                break;
-                            } catch (InvalidChoiceException invalidChoiceException) {
-                                System.out.println(invalidChoiceException.getMessage());
-                                System.out.println("Please Select Number From Menu Only!!");
-                            }
-                        }
-                        switch (choice) {
+    public void createParkingLot() {
+            int numberOfFloors= floors;
+            for (int floorNumber = 0; floorNumber < numberOfFloors; floorNumber++) {
+                listOfSlots = new ArrayList<>();
+                for (int slotNumber = 0; slotNumber < slots; slotNumber++) {
+                    String slotno = ((char) (64 + floorNumber + 1) + "") + (slotNumber + 1);
+                    String slotType;
+                    int choice;
+                    choice = slotNumber+1;//acceptInt();
+                    switch (choice) {
                             case 1:
-                                slot_type = "Car";
+                                slotType = "Car";
                                 break;
                             case 2:
-                                slot_type = "Truck";
+                                slotType = "Truck";
                                 break;
                             case 3:
-                                slot_type = "Bike";
+                                slotType = "Bike";
                                 break;
                             default:
                                 System.out.println("Invalid Choice Please Try Again!!");
                                 continue;
                         }
-                        break;
-
-                    }
-                    list_of_slots.add(new SlotService(slotno, slot_type));
+                    listOfSlots.add(new Slot(slotno, slotType));
                 }
 
-                floor_service.addSlotsOfFloor((char) (64 + floor_number + 1) + "", list_of_slots);
-                this.addFloorInParkingLot(floor_service.getFloor());
+                floorService.addSlotsOfFloor((char) (64 + floorNumber + 1) + "", listOfSlots);
+                this.addFloorInParkingLot(floorService.getFloor());
             }
     }
-    public void addFloorInParkingLot(Floor new_floor){
-
-        parkinglot.getListOfFloorsInParkingLot().add(new_floor);
+    public void addFloorInParkingLot(Floor newFloor){
+        parkinglot.getListOfFloorsInParkingLot().add(newFloor);
     }
 
     public List<Floor> getFloorsInParkingLot(){
         return parkinglot.getListOfFloorsInParkingLot();
     }
 
-    public boolean checkForVacancy( VehicleService vehicleService){
-        Slot vacant_slot = this
-                .getFloorsInParkingLot()
-                .stream()
-                .flatMap(floor -> floor.getSlots().stream()).filter(slot1 -> slot1.getSlot_type().equals(vehicleService.getVehicleType()))
-                .filter(Slot::getSlotVacancy)
-                .findFirst()
-                .orElse(null);
-
-        if(vacant_slot!=null)return true;
-        return false;
+    public VacantSlotFloor getVacantSlotToPark(Vehicle vehicle){
+        VacantSlotFloor vacantSlotFloor;
+        for(Floor floor:this.getFloorsInParkingLot()){
+            for(Slot slot:floor.getSlots()){
+                if(slot.isSlotVacant()&&slot.getSlotType().equals(vehicle.getVehicleType())){
+                    vacantSlotFloor= new VacantSlotFloor(slot,floor);
+                    return vacantSlotFloor;
+                }
+            }
+        }
+        return null;
     }
 
     public void showParking(){
@@ -134,7 +80,7 @@ public class ParkingLotService{
         System.out.println("|Floor\t|SlotID\t|Type\t|IsVacant|");
         for(Floor floor: this.getFloorsInParkingLot()){
             for(Slot slot : floor.getSlots()){
-                System.out.print("|  "+floor.getFloor_id()+"  \t|  "+slot.getSlot_id()+"   | "+ slot.getSlot_type() +"\t|\t"+ slot.isIs_slot_vacant() +" |\t\n");
+                System.out.print("|  "+floor.getFloor_id()+"  \t|  "+slot.getSlotId()+"   | "+ slot.getSlotType() +"\t|\t"+ slot.isSlotVacant() +" |\t\n");
             }
             System.out.print("\n");
 
@@ -144,19 +90,19 @@ public class ParkingLotService{
     public void showSelectedSlots(boolean vacancy){
         System.out.print("Parkings:-\n");
         System.out.println("|Floor\t|SlotID\t|Type\t|IsVacant|");
-        boolean if_result_empty=true;
+        boolean ifResultEmpty=true;
         for(Floor floor: this.getFloorsInParkingLot()){
             for(Slot slot : floor.getSlots()) {
                 if (slot.getSlotVacancy() == vacancy) {
-                    if_result_empty=false;
-                    System.out.print("|  " + floor.getFloor_id() + "  \t|  " + slot.getSlot_id() + "   | " + slot.getSlot_type() + "\t|\t" + slot.isIs_slot_vacant() + " |\t\n");
+                    ifResultEmpty=false;
+                    System.out.print("|  " + floor.getFloor_id() + "  \t|  " + slot.getSlotId() + "   | " + slot.getSlotType() + "\t|\t" + slot.isSlotVacant() + " |\t\n");
 
                 }
             }
             System.out.print("\n");
 
         }
-        if(if_result_empty) System.out.println("No Data to Display!!!\n");
+        if(ifResultEmpty) System.out.println("No Data to Display!!!\n");
     }
 
 

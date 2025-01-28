@@ -1,62 +1,51 @@
 package com.kylas.ParkingLot.Entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Ticket {
-    static int count_id=0;
-    private Integer ticket_id=0;
-    private String slot_id;
-    private String floor_id;
-    private String vehicle_number;
-    static List<Ticket> list_of_issued_tickets = new ArrayList<>();
+    static int countId =0;
+    private Integer ticketId =0;
+    private String slotId;
+    private String floorId;
+    private String vehicleNumber;
+
     public Ticket(){
     }
-    public Ticket(String slot_id, String floor_id, String vehicle_number){
-        count_id++;
-        this.ticket_id=count_id;
-        this.slot_id=slot_id;
-        this.floor_id=floor_id;
-        this.vehicle_number=vehicle_number;
+    public Ticket(String slot_id, String floorId, String vehicleNumber){
+        countId++;
+        this.ticketId = countId;
+        this.slotId =slot_id;
+        this.floorId =floorId;
+        this.vehicleNumber =vehicleNumber;
     }
 
-    public static List<Ticket> getList_of_issued_tickets(){
-        return list_of_issued_tickets;
-    }
-
-    public static void setList_of_issued_tickets(Ticket ticket){
-        list_of_issued_tickets.add(ticket);
-    }
-
-    public void setTicket_id(Integer ticket_id){
-        this.ticket_id = ticket_id;
+    public void setTicketId(Integer ticketId){
+        this.ticketId = ticketId;
     }
 
     public String getSlotID() {
-        return slot_id;
+        return slotId;
     }
 
     public String getFloorID() {
-        return floor_id;
+        return floorId;
     }
 
     public String getVehicleNumber() {
-        return vehicle_number;
+        return vehicleNumber;
     }
 
     public int getTicketID() {
-        return ticket_id;
+        return ticketId;
     }
 
     public void setSlotId(String slotId) {
-        this.slot_id=slotId;
+        this.slotId =slotId;
     }
 
     public void setFloorId(String c) {
-        this.floor_id=c;
+        this.floorId =c;
     }
 
     public void setVehicleNumber(String vehicleNumber) {
-        this.vehicle_number=vehicleNumber;
+        this.vehicleNumber =vehicleNumber;
     }
 }
